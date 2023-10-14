@@ -89,3 +89,10 @@ Dependencies for operator -
 kopf==1.35.0
 kubernetes==21.7.0
 ```
+-------------------------------------------------------------------------------
+
+Pending Improvements and Known Issues
+
+1. Use Statefulset for database(datastore). It currently uses deployment object.
+2. Currently exposes only db volume, password (db username is hardcoded as of now) and name of the app. Expose more parameters depending on need.
+3. crd has to be applied to the K8s cluster as a separate step. Can be automated by making it part of the helm chart.
