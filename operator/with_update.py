@@ -1,5 +1,5 @@
 import kopf
-import kubernetes.client
+from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 import yaml
 import os
@@ -13,6 +13,7 @@ def login_fn(**kwargs):
 
 @kopf.on.create('anirudh.io', 'v1', 'pythonapps')
 def create_fn(spec, name, **kwargs):
+    config.load_incluster_config()
     create_pvc_claim(spec, name)
     db_deployment_name = create_db_deployment(spec, name)
     create_db_service(spec, name)
@@ -29,7 +30,7 @@ def create_db_deployment(spec, name):
   kopf.adopt(db_depl)
 
   # Create a postgres deployment object by requesting the Kubernetes API.
-  api = kubernetes.client.AppsV1Api()
+  api = client.AppsV1Api()
   try:
     depl = api.create_namespaced_deployment(namespace=db_depl['metadata']['namespace'], body=db_depl)
     # Update the parent's status.
@@ -46,7 +47,7 @@ def create_db_service(spec, name):
   kopf.adopt(db_service)
 
   # Create a postgres service object by requesting the Kubernetes API.
-  api = kubernetes.client.CoreV1Api()
+  api = client.CoreV1Api()
   try:
     service = api.create_namespaced_service(namespace=db_service['metadata']['namespace'], body=db_service)
     # Update the parent's status.
@@ -63,7 +64,7 @@ def create_web_service(spec, name):
   kopf.adopt(web_service)
 
   # Create a web service object by requesting the Kubernetes API.
-  api = kubernetes.client.CoreV1Api()
+  api = client.CoreV1Api()
   try:
     service = api.create_namespaced_service(namespace=web_service['metadata']['namespace'], body=web_service)
     # Update the parent's status.
@@ -80,7 +81,7 @@ def create_web_deployment(spec, name):
   kopf.adopt(web_depl)
 
   # Create a web deployment object by requesting the Kubernetes API.
-  api = kubernetes.client.AppsV1Api()
+  api = client.AppsV1Api()
   try:
     depl = api.create_namespaced_deployment(namespace=web_depl['metadata']['namespace'], body=web_depl)
     # Update the parent's status.
@@ -98,7 +99,7 @@ def create_pvc_claim(spec, name):
 
   kopf.adopt(pvc)
 
-  api = kubernetes.client.CoreV1Api()
+  api = client.CoreV1Api()
   try:
     api.create_namespaced_persistent_volume_claim(
         namespace=pvc['metadata']['namespace'],
@@ -119,7 +120,7 @@ def update_fn(spec, name, **kwargs):
   kopf.adopt(pvc)
 
   # Actually patch an object by requesting the Kubernetes API.
-  api = kubernetes.client.CoreV1Api()
+  api = client.CoreV1Api()
   try:
     api.patch_namespaced_persistent_volume_claim(namespace=pvc['metadata']['namespace'], body=pvc)
   except ApiException as e:

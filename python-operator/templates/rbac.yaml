@@ -7,11 +7,11 @@ metadata:
 rules:
   # Framework: posting the events about the handlers progress/errors.
   - apiGroups: [""]
-    resources: [events]
-    verbs: [create]
+    resources: [events, namespaces, persistentvolumes, pods, secrets]
+    verbs: [create, list, watch, patch, delete]
 
-  - apiGroups: [{{ .Values.crd.apiGroup }}]
-    resources: [pods, persistentvolumeclaims, persistentvolume, services]
+  - apiGroups: ["{{ .Values.crd.apiGroup }}"]
+    resources: [pods, persistentvolumeclaims, services]
     verbs: [create, list, watch, patch, delete]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
