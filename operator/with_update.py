@@ -14,7 +14,7 @@ def login_fn(**kwargs):
 @kopf.on.create('anirudh.io', 'v1', 'pythonapps')
 def create_fn(spec, name, **kwargs):
     create_pvc_claim(spec, name)
-    create_secret(spec, name)
+    # create_secret(spec, name)
     db_deployment_name = create_db_deployment(spec, name)
     create_db_service(spec, name)
     print("db_deployment_name ----->", db_deployment_name)
