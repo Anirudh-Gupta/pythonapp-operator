@@ -14,27 +14,11 @@ def login_fn(**kwargs):
 @kopf.on.create('anirudh.io', 'v1', 'pythonapps')
 def create_fn(spec, name, **kwargs):
     create_pvc_claim(spec, name)
-    # create_secret(spec, name)
     db_deployment_name = create_db_deployment(spec, name)
     create_db_service(spec, name)
     print("db_deployment_name ----->", db_deployment_name)
     create_web_deployment(spec, name)
     create_web_service(spec, name)
-
-
-def create_secret(spec, name):
-  path = os.path.join(ROOT_DIR, 'k8s', 'web-secret.yaml')
-  secret_tmpl = open(path, 'rt').read()
-  secret_tmpl_text = secret_tmpl.format(name=name)
-  secret = yaml.safe_load(secret_tmpl_text)
-  kopf.adopt(secret)
-
-  # Create a secret object by requesting the Kubernetes API for storing postgres password.
-  api = kubernetes.client.CoreV1Api()
-  try:
-    api.create_namespaced_secret(namespace=secret['metadata']['namespace'], body=secret)
-  except ApiException as e:
-    print("Exception when calling CoreV1Api->create_namespaced_secret: %s\n" % e)
 
 
 def create_db_deployment(spec, name):
