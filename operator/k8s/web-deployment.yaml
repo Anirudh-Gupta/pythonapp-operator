@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{name}-web-deployment"
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: "{name}-app"
+  template:
+    metadata:
+      labels:
+        component: "{name}-app"
+    spec:
+      containers:
+        - name: "{name}-app-container"
+          image: anirudhg47/users-app:latest
+          ports:
+            - containerPort: 8000
+          livenessProbe:
+            exec:
+              command:
+                - telnet "{name}-db-service" POSTGRES_PORT
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          env:
+            - name: POSTGRES_HOST
+              value: "{name}-db-service"
+            - name: POSTGRES_USER
+              value: hello_flask
+            - name: POSTGRES_PORT
+              value: '5432'
+            - name: POSTGRES_DB
+              value: "{name}_db"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{name}-pgpassword"
+                  key: PGPASSWORD

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{name}-db-deployment"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: "{name}-db"
+  template:
+    metadata:
+      labels:
+        component: "{name}-db"
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: "{name}-db-pvc"
+      containers:
+        - name: postgres
+          image: postgres:12-alpine
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres
+          env:
+            - name: POSTGRES_USER
+              value: hello_flask
+            - name: POSTGRES_DB
+              value: "{name}_db"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "{name}-pgpassword"
+                  key: PGPASSWORD

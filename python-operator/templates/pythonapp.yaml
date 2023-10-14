@@ -1,0 +1,7 @@
+apiVersion: anirudh.io/v1
+kind: PythonApp
+metadata:
+  name: {{ .Values.web.service.name }}
+  namespace: {{ .Values.namespace.name }}
+spec:
+  db_size: {{ .Values.db.volume.size }}
