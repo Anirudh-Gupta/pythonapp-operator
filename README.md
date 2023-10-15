@@ -15,7 +15,7 @@ Project structure -
 │   │   ├── web-service.yaml
 │   ├── Dockerfile(FOr building the operator image)
 │   ├── requirements.txt
-│   ├── with_upadate.py(Core operator logic)
+│   ├── with_update.py(Core operator logic)
 ├── python-operator
 │   ├── charts
 │   ├── templates(operator deployment, namespace, pv, rbac, sa, secret, pythonapp)
@@ -88,6 +88,17 @@ Dependencies for operator -
 ```
 kopf==1.35.0
 kubernetes==21.7.0
+```
+-------------------------------------------------------------------------------
+How to use the application deployed on K8s (Tested on docker-desktop v1.21.4) -
+
+```
+# Port Forward the web service port on the host port.
+# kubectl get svc -n <namespace>
+# kubectl port-forward --namespace=<namespace> service/<service-name> <host-port>:<web-service-port>
+kubectl port-forward --namespace=pythonapp service/users-web-service 8080:80
+
+# Access the application on your host using localhost:8080/users
 ```
 -------------------------------------------------------------------------------
 
