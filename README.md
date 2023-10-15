@@ -1,4 +1,4 @@
-Project structure -
+## Project structure -
 ```
 ├── app
 │   ├── index.js
@@ -46,7 +46,7 @@ Build an image of this app using -
 ```
 -------------------------------------------------------------------------------
 
-Build operator -
+## Build operator -
 
 ```
   # cd operator && docker build -t <repo>:tag .
@@ -57,7 +57,7 @@ Build operator -
 ```
 
 -------------------------------------------------------------------------------
-Apply CRD first before installing helm chart using the below command
+## Apply CRD first before installing helm chart using the below command
 
 ```
 kubectl apply -f crds/crd.yaml
@@ -67,7 +67,7 @@ kubectl apply -f crds/crd.yaml
 
 -------------------------------------------------------------------------------
 
-Helm Chart
+## Install Helm Chart
 
 ```
 Install helm chart using below command
@@ -77,7 +77,19 @@ Example: helm install python-operator python-operator
 
 -------------------------------------------------------------------------------
 
-Dependencies for python app -
+## How to use the application deployed on K8s (Tested on docker-desktop v1.21.4) -
+
+```
+# Port Forward the web service port on the host port.
+# kubectl get svc -n <namespace>
+# kubectl port-forward --namespace=<namespace> service/<service-name> <host-port>:<web-service-port>
+kubectl port-forward --namespace=pythonapp service/users-web-service 8080:80
+
+# Access the application on your host using localhost:8080/users
+```
+-------------------------------------------------------------------------------
+
+## Dependencies for python app -
 ```
 flask
 psycopg2-binary
@@ -90,19 +102,8 @@ kopf==1.35.0
 kubernetes==21.7.0
 ```
 -------------------------------------------------------------------------------
-How to use the application deployed on K8s (Tested on docker-desktop v1.21.4) -
 
-```
-# Port Forward the web service port on the host port.
-# kubectl get svc -n <namespace>
-# kubectl port-forward --namespace=<namespace> service/<service-name> <host-port>:<web-service-port>
-kubectl port-forward --namespace=pythonapp service/users-web-service 8080:80
-
-# Access the application on your host using localhost:8080/users
-```
--------------------------------------------------------------------------------
-
-Pending Improvements and Known Issues
+## Pending Improvements and Known Issues
 
 1. Use Statefulset for database(datastore). It currently uses deployment object.
 2. Currently exposes only db volume, password (db username is hardcoded as of now) and name of the app. Expose more parameters depending on need.
